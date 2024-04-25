@@ -1,0 +1,88 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_CREDS=credentials('mle-template')
+        DB_CREDS=credentials('pgaas-lab2')
+        PG_DB    = "postgres"
+        LC_ALL   = "en_US.UTF-8"
+        LANG     = "en_US.UTF-8"
+        LANGUAGE = "en_US.UTF-8"
+    }
+
+options {
+        timestamps()
+        skipDefaultCheckout(true)
+	}
+    stages {
+        stage('Clone github repository') {
+            steps {
+                cleanWs()
+                sh 'git clone -b main https://github.com/Timoniche/BigDataLab2.git'
+			}
+		}
+
+        stage('Checkout repo dir') {
+            steps {
+                sh 'cd BigDataLab2 && dir'
+			}
+	    }
+
+        stage('Login') {
+            steps {
+                sh 'docker login -u $DOCKERHUB_CREDS_USR -p $DOCKERHUB_CREDS_PSW'
+            }
+        }
+
+        stage('Building docker') {
+            steps {
+                sh 'cd BigDataLab2 && docker compose build'
+            }
+        }
+
+        stage('Building .env file for docker compose') {
+            steps {
+                dir("BigDataLab2") {
+                    sh '''
+                        echo PG_USER=$DB_CREDS_USR > .env
+                        echo PG_PASSWORD=$DB_CREDS_PSW >> .env
+                        echo PG_DB=$PG_DB >> .env
+                    '''
+                }
+            }
+        }
+
+        stage('Create and run docker container') {
+            steps {
+                dir("BigDataLab2") {
+                    sh 'cat .env'
+                    sh 'docker compose up -d'
+                }
+            }
+        }
+
+        stage('Checkout coverage report, images') {
+            steps{
+                dir("BigDataLab2") {
+                    sh 'docker compose images'
+                    sh 'docker compose logs -t --tail 50'
+                }
+            }
+        }
+
+        stage('Push') {
+            steps {
+                sh 'docker push ddulaev/lab2:latest'
+            }
+        }
+	}
+
+    post {
+        always {
+            dir("BigDataLab2") {
+                sh 'docker compose down'
+                sh 'docker logout'
+            }
+        }
+    }
+}

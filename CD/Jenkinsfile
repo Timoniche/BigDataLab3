@@ -1,0 +1,67 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_CREDS=credentials('mle-template')
+        DB_CREDS=credentials('pgaas-lab2')
+        PG_DB    = "postgres"
+        LC_ALL   = "en_US.UTF-8"
+        LANG     = "en_US.UTF-8"
+        LANGUAGE = "en_US.UTF-8"
+    }
+
+options {
+        timestamps()
+        skipDefaultCheckout(true)
+	}
+    stages {
+
+        stage('Login') {
+            steps {
+                sh 'docker login -u $DOCKERHUB_CREDS_USR -p $DOCKERHUB_CREDS_PSW'
+            }
+        }
+
+        stage('Pull image') {
+            steps {
+                sh 'docker pull ddulaev/lab2:latest'
+            }
+        }
+
+        stage('Building .env file for docker compose') {
+            steps {
+                sh '''
+                    echo PG_USER=$DB_CREDS_USR > .env
+                    echo PG_PASSWORD=$DB_CREDS_PSW >> .env
+                    echo PG_DB=$PG_DB >> .env
+                '''
+            }
+        }
+
+        stage('Downloading docker-compose') {
+            steps {
+                sh 'curl https://raw.githubusercontent.com/Timoniche/BigDataLab2/main/CD/docker-compose.yml -o docker-compose.yml'
+                sh 'ls'
+            }
+        }
+
+        stage('Running docker compose') {
+            steps {
+                sh 'docker compose up -d'
+            }
+        }
+
+        stage('Running functional tests') {
+            steps{
+                sh 'docker compose exec web python -m src.func_tests.api_test'
+            }
+        }
+	}
+
+    post {
+        always {
+            sh 'docker compose down'
+            sh 'docker logout'
+        }
+    }
+}

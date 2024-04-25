@@ -1,0 +1,1 @@
+docker build -f DockerfileModel -t local_model_image .

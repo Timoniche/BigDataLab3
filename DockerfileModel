@@ -1,0 +1,22 @@
+FROM python:3.8-slim
+
+ENV PYTHONUNBUFFERED 1
+
+WORKDIR /app
+
+ADD . /app
+
+ENV PYTHONPATH "${PYTHONPATH}:/app/src"
+
+RUN apt-get update && apt-get install -y gcc python3-dev
+
+RUN pip install --upgrade pip
+
+RUN pip install -r requirements.txt
+
+RUN pip install coverage
+
+### to remove gui part from cv2
+RUN pip uninstall opencv-python -y
+RUN pip install opencv-python-headless
+###
