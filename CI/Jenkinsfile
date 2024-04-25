@@ -2,8 +2,10 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDS=credentials('mle-template')
-        DB_CREDS=credentials('pgaas-lab2')
+        DOCKERHUB_CREDS = credentials('mle-template')
+        DB_CREDS        = credentials('pgaas-lab2')
+        PROJECT_NAME    = "BigDataLab3"
+        IMAGE_NAME      = "lab3"
         PG_DB    = "postgres"
         LC_ALL   = "en_US.UTF-8"
         LANG     = "en_US.UTF-8"
@@ -18,13 +20,13 @@ options {
         stage('Clone github repository') {
             steps {
                 cleanWs()
-                sh 'git clone -b main https://github.com/Timoniche/BigDataLab2.git'
+                sh 'git clone -b main https://github.com/Timoniche/$PROJECT_NAME.git'
 			}
 		}
 
         stage('Checkout repo dir') {
             steps {
-                sh 'cd BigDataLab2 && dir'
+                sh 'cd $PROJECT_NAME && dir'
 			}
 	    }
 
@@ -36,13 +38,13 @@ options {
 
         stage('Building docker') {
             steps {
-                sh 'cd BigDataLab2 && docker compose build'
+                sh 'cd $PROJECT_NAME && docker compose build'
             }
         }
 
         stage('Building .env file for docker compose') {
             steps {
-                dir("BigDataLab2") {
+                dir("$PROJECT_NAME") {
                     sh '''
                         echo PG_USER=$DB_CREDS_USR > .env
                         echo PG_PASSWORD=$DB_CREDS_PSW >> .env
@@ -54,7 +56,7 @@ options {
 
         stage('Create and run docker container') {
             steps {
-                dir("BigDataLab2") {
+                dir("$PROJECT_NAME") {
                     sh 'cat .env'
                     sh 'docker compose up -d'
                 }
@@ -63,7 +65,7 @@ options {
 
         stage('Checkout coverage report, images') {
             steps{
-                dir("BigDataLab2") {
+                dir("$PROJECT_NAME") {
                     sh 'docker compose images'
                     sh 'docker compose logs -t --tail 50'
                 }
@@ -72,14 +74,14 @@ options {
 
         stage('Push') {
             steps {
-                sh 'docker push ddulaev/lab2:latest'
+                sh 'docker push ddulaev/$IMAGE_NAME:latest'
             }
         }
 	}
 
     post {
         always {
-            dir("BigDataLab2") {
+            dir("$PROJECT_NAME") {
                 sh 'docker compose down'
                 sh 'docker logout'
             }

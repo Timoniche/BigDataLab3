@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   web:
-    image: local_model_image:latest
+    image: local_model_image_lab3:latest
     container_name: web
     depends_on:
       - db

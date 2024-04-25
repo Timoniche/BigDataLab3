@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   web:
-    image: ddulaev/lab2:latest
+    image: ddulaev/lab3:latest
     container_name: web
     depends_on:
       - db

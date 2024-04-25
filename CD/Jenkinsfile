@@ -2,8 +2,10 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDS=credentials('mle-template')
-        DB_CREDS=credentials('pgaas-lab2')
+        DOCKERHUB_CREDS = credentials('mle-template')
+        DB_CREDS        = credentials('pgaas-lab2')
+        PROJECT_NAME    = "BigDataLab3"
+        IMAGE_NAME      = "lab3"
         PG_DB    = "postgres"
         LC_ALL   = "en_US.UTF-8"
         LANG     = "en_US.UTF-8"
@@ -24,7 +26,7 @@ options {
 
         stage('Pull image') {
             steps {
-                sh 'docker pull ddulaev/lab2:latest'
+                sh 'docker pull ddulaev/$IMAGE_NAME:latest'
             }
         }
 
@@ -40,7 +42,7 @@ options {
 
         stage('Downloading docker-compose') {
             steps {
-                sh 'curl https://raw.githubusercontent.com/Timoniche/BigDataLab2/main/CD/docker-compose.yml -o docker-compose.yml'
+                sh 'curl https://raw.githubusercontent.com/Timoniche/$PROJECT_NAME/main/CD/docker-compose.yml -o docker-compose.yml'
                 sh 'ls'
             }
         }
