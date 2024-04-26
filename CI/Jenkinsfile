@@ -45,7 +45,7 @@ options {
 
         stage('Installing ansible') { //TODO: move to jenkins docker build someday
             steps {
-                sh 'RUN apt-get install -y ansible'
+                sh 'apt-get install -y ansible'
             }
         }
 
