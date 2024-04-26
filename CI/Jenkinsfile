@@ -64,7 +64,7 @@ options {
                 dir("$PROJECT_NAME") {
                     sh 'echo $VAULT_CREDS_PSW > vault_pwd.txt'
                     sh 'cat vault_pwd.txt' //TODO: remove this lime
-                    sh 'ansible-vault decrypt vault_env.yml --vault-password-file vault_pwd.txt'
+                    sh 'ansible-vault decrypt vault_env.yml --vault-password-file vault_pwd.txt -v'
                     sh 'cat vault_env.yml'  //TODO: remove this line
                     sh 'cp vault_env.yml .env'
                 }
