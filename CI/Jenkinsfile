@@ -59,9 +59,7 @@ options {
             steps {
                 dir("$PROJECT_NAME") {
                     sh 'echo $VAULT_CREDS_PSW > vault_pwd.txt'
-                    sh 'cat vault_pwd.txt' //TODO: remove this lime
                     sh 'ansible-vault decrypt vault_env.yml --vault-password-file vault_pwd.txt -v'
-                    sh 'cat vault_env.yml'  //TODO: remove this line
                     sh 'cp vault_env.yml .env'
                 }
             }
@@ -70,7 +68,6 @@ options {
         stage('Create and run docker container') {
             steps {
                 dir("$PROJECT_NAME") {
-                    sh 'cat .env' //TODO: remove this line
                     sh 'docker compose up -d'
                 }
             }
@@ -80,7 +77,7 @@ options {
             steps {
                 dir("$PROJECT_NAME") {
                     sh 'ansible-vault encrypt vault_env.yml --vault-password-file vault_pwd.txt'
-                    sh 'cat vault_env.yml' //TODO: remove this line
+                    sh 'cat vault_env.yml'
                     sh 'rm -f vault_pwd.txt'
                     sh 'rm -f .env'
                 }
