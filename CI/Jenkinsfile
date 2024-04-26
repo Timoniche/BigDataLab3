@@ -46,9 +46,14 @@ options {
         stage('Installing ansible') { //TODO: move to jenkins docker build someday
             steps {
                 sh 'apt-get install -y ansible'
-                sh 'apt-get install -y language-pack-en'
             }
         }
+
+//         stage('Installing Locales') {
+//             steps {
+//                 sh ''
+//             }
+//         }
 
         stage('Decrypting .env file from vault') {
             steps {
@@ -56,6 +61,7 @@ options {
                     sh 'echo $VAULT_CREDS_PSW > vault_pwd.txt'
                     sh 'cat vault_pwd.txt' //TODO: remove this lime
                     sh 'export LANG=$LANG'
+                    sh 'export LC_ALL=$LC_ALL'
                     sh 'ansible-vault decrypt vault_env.yml --vault-password-file vault_pwd.txt'
                     sh 'cat vault_env.yml'  //TODO: remove this line
                     sh 'cp vault_env.yml .env'
