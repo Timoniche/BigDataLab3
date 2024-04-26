@@ -37,11 +37,12 @@ options {
             }
         }
 
-        stage('Building docker') {
-            steps {
-                sh 'cd $PROJECT_NAME && docker compose build'
-            }
-        }
+// TODO: return this block after debugging ansible is finished
+//         stage('Building docker') {
+//             steps {
+//                 sh 'cd $PROJECT_NAME && docker compose build'
+//             }
+//         }
 
         stage('Installing ansible') { //TODO: move to jenkins docker build someday
             steps {
