@@ -10,8 +10,6 @@ ENV PYTHONPATH "${PYTHONPATH}:/app/src"
 
 RUN apt-get update && apt-get install -y gcc python3-dev
 
-RUN apt-get install -y ansible
-
 RUN pip install --upgrade pip
 
 RUN pip install -r requirements.txt

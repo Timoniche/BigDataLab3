@@ -43,6 +43,12 @@ options {
             }
         }
 
+        stage('Installing ansible') { //TODO: move to jenkins docker build someday
+            steps {
+                sh 'RUN apt-get install -y ansible'
+            }
+        }
+
         stage('Decrypting .env file from vault') {
             steps {
                 dir("$PROJECT_NAME") {
