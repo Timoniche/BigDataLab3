@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKERHUB_CREDS = credentials('mle-template')
         DB_CREDS        = credentials('pgaas-lab2')
+        VAULT_CREDS     = credentials('vault_lab_3')
         PROJECT_NAME    = "BigDataLab3"
         IMAGE_NAME      = "lab3"
         PG_DB    = "postgres"
@@ -42,14 +43,14 @@ options {
             }
         }
 
-        stage('Building .env file for docker compose') {
+        stage('Decrypting .env file from vault') {
             steps {
                 dir("$PROJECT_NAME") {
-                    sh '''
-                        echo PG_USER=$DB_CREDS_USR > .env
-                        echo PG_PASSWORD=$DB_CREDS_PSW >> .env
-                        echo PG_DB=$PG_DB >> .env
-                    '''
+                    sh 'echo $VAULT_CREDS_PSW > vault_pwd.txt'
+                    sh 'cat vault_pwd.txt' //TODO: remove this lime
+                    sh 'ansible-vault decrypt vault_env.yml --vault-password-file vault_pwd.txt'
+                    sh 'cat vault_env.yml'  //TODO: remove this line
+                    sh 'cp vault_env.yml .env'
                 }
             }
         }
@@ -57,8 +58,19 @@ options {
         stage('Create and run docker container') {
             steps {
                 dir("$PROJECT_NAME") {
-                    sh 'cat .env'
+                    sh 'cat .env' //TODO: remove this line
                     sh 'docker compose up -d'
+                }
+            }
+        }
+
+        stage('Clearing sensitive files') {
+            steps {
+                dir("$PROJECT_NAME") {
+                    sh 'ansible-vault encrypt vault_env.yml --vault-password-file vault_pwd.txt'
+                    sh 'cat vault_env.yml' //TODO: remove this line
+                    sh 'rm -f vault_pwd.txt'
+                    sh 'rm -f .env'
                 }
             }
         }
@@ -84,6 +96,8 @@ options {
             dir("$PROJECT_NAME") {
                 sh 'docker compose down'
                 sh 'docker logout'
+                sh 'rm -f vault_pwd.txt'
+                sh 'rm -f .env'
             }
         }
     }

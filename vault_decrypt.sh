@@ -1,0 +1,1 @@
+ansible-vault decrypt vault_env.yml --vault-password-file vault_pwd.txt
