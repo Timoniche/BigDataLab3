@@ -11,6 +11,15 @@ pipeline {
         LC_ALL   = "en_US.UTF-8"
         LANG     = "en_US.UTF-8"
         LANGUAGE = "en_US.UTF-8"
+
+        LANG="en_US.UTF-8"
+        LC_COLLATE="en_US.UTF-8"
+        LC_CTYPE="en_US.UTF-8"
+        LC_MONETARY="en_US.UTF-8"
+        LC_NUMERIC="en_US.UTF-8"
+        LC_TIME="en_US.UTF-8"
+        LC_MESSAGES="en_US.UTF-8"
+        LC_ALL="en_US.UTF-8"
     }
 
 options {
@@ -50,21 +59,11 @@ options {
             }
         }
 
-        stage('Installing Locales') {
-            steps {
-                sh 'apt-get install -y locales'
-                sh 'locale-gen en_US.UTF-8'
-            }
-        }
-
         stage('Decrypting .env file from vault') {
             steps {
                 dir("$PROJECT_NAME") {
                     sh 'echo $VAULT_CREDS_PSW > vault_pwd.txt'
                     sh 'cat vault_pwd.txt' //TODO: remove this lime
-                    sh 'export LC_ALL=C.UTF-8'
-                    sh 'export LANG=C.UTF-8'
-                    sh 'export LANGUAGE=C.UTF-8'
                     sh 'ansible-vault decrypt vault_env.yml --vault-password-file vault_pwd.txt'
                     sh 'cat vault_env.yml'  //TODO: remove this line
                     sh 'cp vault_env.yml .env'
