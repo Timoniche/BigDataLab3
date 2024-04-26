@@ -50,11 +50,12 @@ options {
             }
         }
 
-//         stage('Installing Locales') {
-//             steps {
-//                 sh ''
-//             }
-//         }
+        stage('Installing Locales') {
+            steps {
+                sh 'apt-get install -y locales'
+                sh 'locale-gen en_US.UTF-8'
+            }
+        }
 
         stage('Decrypting .env file from vault') {
             steps {
