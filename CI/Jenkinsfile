@@ -10,16 +10,16 @@ pipeline {
         PG_DB    = "postgres"
 //         LC_ALL   = "en_US.UTF-8"
 //         LANG     = "en_US.UTF-8"
-        LANGUAGE = "en_US.UTF-8"
+        LANGUAGE = "C.UTF-8"
 
-        LANG="en_US.UTF-8"
-        LC_COLLATE="en_US.UTF-8"
-        LC_CTYPE="en_US.UTF-8"
-        LC_MONETARY="en_US.UTF-8"
-        LC_NUMERIC="en_US.UTF-8"
-        LC_TIME="en_US.UTF-8"
-        LC_MESSAGES="en_US.UTF-8"
-        LC_ALL="en_US.UTF-8"
+        LANG="C.UTF-8"
+        LC_COLLATE="C.UTF-8"
+        LC_CTYPE="C.UTF-8"
+        LC_MONETARY="C.UTF-8"
+        LC_NUMERIC="C.UTF-8"
+        LC_TIME="C.UTF-8"
+        LC_MESSAGES="C.UTF-8"
+        LC_ALL="C.UTF-8"
     }
 
 options {
