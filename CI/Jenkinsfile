@@ -7,19 +7,16 @@ pipeline {
         VAULT_CREDS     = credentials('vault_lab_3')
         PROJECT_NAME    = "BigDataLab3"
         IMAGE_NAME      = "lab3"
-        PG_DB    = "postgres"
-//         LC_ALL   = "en_US.UTF-8"
-//         LANG     = "en_US.UTF-8"
-        LANGUAGE = "C.UTF-8"
-
-        LANG="C.UTF-8"
-        LC_COLLATE="C.UTF-8"
-        LC_CTYPE="C.UTF-8"
-        LC_MONETARY="C.UTF-8"
-        LC_NUMERIC="C.UTF-8"
-        LC_TIME="C.UTF-8"
-        LC_MESSAGES="C.UTF-8"
-        LC_ALL="C.UTF-8"
+        PG_DB           = "postgres"
+        LANGUAGE    = "C.UTF-8"
+        LANG        = "C.UTF-8"
+        LC_COLLATE  = "C.UTF-8"
+        LC_CTYPE    = "C.UTF-8"
+        LC_MONETARY = "C.UTF-8"
+        LC_NUMERIC  = "C.UTF-8"
+        LC_TIME     = "C.UTF-8"
+        LC_MESSAGES = "C.UTF-8"
+        LC_ALL      = "C.UTF-8"
     }
 
 options {
@@ -46,12 +43,11 @@ options {
             }
         }
 
-// TODO: return this block after debugging ansible is finished
-//         stage('Building docker') {
-//             steps {
-//                 sh 'cd $PROJECT_NAME && docker compose build'
-//             }
-//         }
+        stage('Building docker') {
+            steps {
+                sh 'cd $PROJECT_NAME && docker compose build'
+            }
+        }
 
         stage('Installing ansible') { //TODO: move to jenkins docker build someday
             steps {
