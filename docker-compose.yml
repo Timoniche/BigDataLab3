@@ -6,8 +6,7 @@ services:
     depends_on:
       - db
     environment:
-      - PG_USER=${PG_USER}
-      - PG_PASSWORD=${PG_PASSWORD}
+      - VAULT_CREDS_PSW=${VAULT_CREDS_PSW}
       - PG_DB=${PG_DB}
     build:
       dockerfile: DockerfileModel

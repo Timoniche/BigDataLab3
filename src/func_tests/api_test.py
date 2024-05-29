@@ -2,6 +2,8 @@ import os
 import pathlib
 import sys
 
+from vault_credentials import VaultCredentials
+
 src_module_path = os.path.join(os.getcwd(), "src")
 sys.path.insert(1, src_module_path)
 
@@ -47,7 +49,8 @@ class FunctionalApiTest:
         self.log.info('Server Test Passed')
 
     def test_db_upload_photo(self):
-        db = Database()
+        vault_credentials = VaultCredentials()
+        db = Database(vault_credentials)
         service = Service(db)
 
         filename = generate_time_id()

@@ -5,15 +5,19 @@ import psycopg2
 from psycopg2 import extensions
 
 from logger import Logger
+from vault_credentials import VaultCredentials
 
 
 class Database:
-    def __init__(self):
+    def __init__(
+            self,
+            vault: VaultCredentials,
+    ):
         logger = Logger(show=True)
         self.log = logger.get_logger(__name__)
 
-        self.pg_user = os.environ.get('PG_USER')
-        self.pg_password = os.environ.get('PG_PASSWORD')
+        self.pg_user = vault.get_secret('PG_USER')
+        self.pg_password = vault.get_secret('PG_PASSWORD')
         self.pg_dbname = os.environ.get('PG_DB')
 
     def execute(
@@ -46,12 +50,3 @@ class Database:
                     return cursor.fetchall()
         except psycopg2.DatabaseError as e:
             self.log.error(f'Psycopg2 db error, error: {e}, command: {command}')
-
-
-def main():
-    db = Database()
-    db.execute('SELECT datname FROM pg_database')
-
-
-if __name__ == '__main__':
-    main()

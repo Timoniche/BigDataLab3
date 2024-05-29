@@ -7,6 +7,8 @@ import cv2
 import numpy as np
 import uvicorn
 
+from vault_credentials import VaultCredentials
+
 src_module_path = os.path.join(os.getcwd(), "src")
 sys.path.insert(1, src_module_path)
 
@@ -26,7 +28,8 @@ from images_dataset import IMAGE_SIZE, extract_hog_features  # noqa: E402
 from service import Service  # noqa: E402
 from utils.common_utils import cur_file_path  # noqa: E402
 
-db = Database()
+vault_credentials = VaultCredentials()
+db = Database(vault_credentials)
 service = Service(db)
 
 app = FastAPI()

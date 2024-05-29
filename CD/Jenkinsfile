@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKERHUB_CREDS = credentials('mle-template')
         DB_CREDS        = credentials('pgaas-lab2')
+        VAULT_CREDS     = credentials('vault_lab_3')
         PROJECT_NAME    = "BigDataLab3"
         IMAGE_NAME      = "lab3"
         PG_DB    = "postgres"
@@ -33,7 +34,8 @@ options {
         stage('Building .env file for docker compose') {
             steps {
                 sh '''
-                    echo PG_USER=$DB_CREDS_USR > .env
+                    echo VAULT_CREDS_PSW=$VAULT_CREDS_PSW > .env
+                    echo PG_USER=$DB_CREDS_USR >> .env
                     echo PG_PASSWORD=$DB_CREDS_PSW >> .env
                     echo PG_DB=$PG_DB >> .env
                 '''
@@ -66,6 +68,7 @@ options {
         always {
             sh 'docker compose down'
             sh 'docker logout'
+            sh 'rm -f .env'
         }
     }
 }
